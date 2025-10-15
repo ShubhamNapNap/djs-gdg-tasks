@@ -80,7 +80,8 @@ if st.sidebar.button("Predict"):
     else:
         st.write("Finished")
 
-dt[['circuitRef','lat','lng']].drop_duplicates().reset_index(inplace = True)
+dt[['circuitRef','lat','lng']].drop_duplicates().df.reset_index(drop=True, inplace=True)
+
 st.dataframe(dt)
 #y_pred = model.predict(X_test)
 #y_pred_proba = model.predict_proba(X_test)[:, 1]
