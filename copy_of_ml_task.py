@@ -49,7 +49,7 @@ lookup_table = pd.read_csv("f1_dnf.csv")[['driverRef','constructorRef','lat','ln
 year = st.number_input("Year", min_value=1950, max_value=2030, value=2023)
 round_num = st.number_input("Round", min_value=1, max_value=30, value=1)
 grid = st.number_input("Grid", min_value=1, max_value=50, value=1)
-positionOrder = st.number_input("Position Order", min_value=1, max_value=50, value=1)
+
 driver_choice = st.selectbox("Driver", sorted(lookup_table['driverRef'].unique()))
 constructor_choice = st.selectbox("Constructor", sorted(lookup_table['constructorRef'].unique()))
 lat = st.number_input("Latitude", value=float(lookup_table['lat'].mean()))
@@ -63,7 +63,6 @@ input_df = pd.DataFrame([{
     "year": year,
     "round": round_num,
     "grid": grid,
-    "positionOrder": positionOrder,
     "lat": lat,
     "lng": lng,
     "driver_age_at_race": driver_age,
