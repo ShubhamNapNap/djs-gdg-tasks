@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 pd.set_option("display.max_columns", 200)
 df = pd.read_csv("f1_dnf.csv")
+dt = pd.read_csv("f1_dnf.csv)
 df = df[[
     'resultId', 'year', 'round', 'grid', 'positionOrder', 'points', 'laps', 'dob', 'date', 'target_finish',
     'driverRef', 'forename', 'surname', 'nationality_x',
@@ -79,7 +80,7 @@ if st.sidebar.button("Predict"):
     else:
         st.write("Finished")
 
-circuits = df[['circuitRef','name_y','lat','lng']].drop_duplicates()
+circuits = dt[['circuitRef','name_y','lat','lng']].drop_duplicates()
 st.dataframe(circuits)
 #y_pred = model.predict(X_test)
 #y_pred_proba = model.predict_proba(X_test)[:, 1]
