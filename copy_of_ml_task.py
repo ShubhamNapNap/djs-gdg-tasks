@@ -59,7 +59,7 @@ driver_age = st.number_input("Driver Age at Race (years)", min_value=16.0, max_v
 driver_encoded = le_driver.transform([driver_choice])[0]
 constructor_encoded = le_constructor.transform([constructor_choice])[0]
 
-input_df = pd.DataFrame([{
+input_data = pd.DataFrame([{
     "year": year,
     "round": round_num,
     "grid": grid,
