@@ -47,7 +47,7 @@ model.fit(X_train, y_train)
 st.title('Formula 1 Finish Prediction')
 lookup_table = pd.read_csv("f1_dnf.csv")[['driverRef','constructorRef','lat','lng']].drop_duplicates()
 
-year = st.number_input("Year", min_value=1950, max_value=2030, value=2023)
+year = st.number_input("Year", min_value=1950, max_value=2030, value=2025)
 round_num = st.number_input("Round", min_value=1, max_value=30, value=1)
 grid = st.number_input("Grid", min_value=1, max_value=50, value=1)
 
@@ -71,7 +71,7 @@ input_data = pd.DataFrame([{
     "driverRef_encoded": driver_encoded
 }])
 
-if st.sidebar.button("Predict"):
+if st.button("Predict"):
     prediction = model.predict(input_data)
     prediction_proba = model.predict_proba(input_data)[:, 1]
 
@@ -80,30 +80,56 @@ if st.sidebar.button("Predict"):
     else:
         st.write("Finished")
 
-dt = dt[['circuitRef','lat','lng']].drop_duplicates().df.reset_index(drop=True)
+st.title("Circuit-lat-lng")
+dt = dt[['circuitRef','lat','lng']].drop_duplicates().reset_index(drop=True)
 
 st.dataframe(dt)
-#y_pred = model.predict(X_test)
-#y_pred_proba = model.predict_proba(X_test)[:, 1]
 
-'''from sklearn.metrics import (
+st.title("Model's performance")
+y_pred = model.predict(X_test)
+y_pred_proba = model.predict_proba(X_test)[:, 1]
+
+from sklearn.metrics import (
     accuracy_score,
     precision_score,
     recall_score,
     f1_score,
     roc_auc_score,
-    confusion_matrix,
-    classification_report
-)'''
+)
 
-'''print(f'Accuracy: {accuracy_score(y_test, y_pred):.3f}')
-print(f'Precision: {precision_score(y_test, y_pred):.3f}')
-print(f'Recall: {recall_score(y_test, y_pred):.3f}')
-print(f'F1 Score: {f1_score(y_test, y_pred):.3f}')
-print(f'ROC-AUC: {roc_auc_score(y_test, y_pred_proba):.3f}')
+st.write(f'Accuracy: {accuracy_score(y_test, y_pred):.3f}')
+st.write(f'Precision: {precision_score(y_test, y_pred):.3f}')
+st.write(f'Recall: {recall_score(y_test, y_pred):.3f}')
+st.write(f'F1 Score: {f1_score(y_test, y_pred):.3f}')
+st.write(f'ROC-AUC: {roc_auc_score(y_test, y_pred_proba):.3f}')
 
-print('\nConfusion Matrix:')
-print(confusion_matrix(y_test, y_pred))
 
-print('\nClassification Report:')
-print(classification_report(y_test, y_pred))'''
+st.sidebar.write("Created by Shubham Nagpure\n")
+st.sidebar.write("Provide Lat and Lng according to the circuit table given below.\n")
+
+import matplotlib.pylab as plt
+import seaborn as sns
+plt.style.use("ggplot")
+dl = pd.read_csv("f1_dnf.csv")
+dl['finish_status'] = dl['target_finish'].map({1: 'Finished', 0: 'DNF/Retired'})
+top_10_constructors = dl['constructorRef'].value_counts().head(10).index
+df_top_10 = dl[dl['constructorRef'].isin(top_10_constructors)]
+ax = sns.countplot(
+    y='constructorRef',
+    data=df_top_10,
+    order=top_10_constructors,
+    hue='finish_status',
+    palette={'Finished': '#2ecc71', 'DNF/Retired': '#e74c3c'},
+    saturation=0.8
+)
+plt.title('Total Finishes vs. DNFs for Top 10 Constructors (by Race Count)', fontsize=18)
+plt.xlabel('Total Race Results (Count)', fontsize=14)
+plt.ylabel('Constructor Reference ID', fontsize=14)
+plt.tick_params(axis='y', labelsize=12)
+
+plt.legend(title='Race Outcome', loc='lower right', fontsize=12, title_fontsize=12)
+
+plt.tight_layout()
+st.pyplot(plt)
+
+st.sidebar.write("Total Finishes vs. DNFs for Top 10 Constructors (by Race Count) given at the end.")
