@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 pd.set_option("display.max_columns", 200)
 df = pd.read_csv("f1_dnf.csv")
-dt = pd.read_csv("f1_dnf.csv)
+dt = pd.read_csv("f1_dnf.csv")
 df = df[[
     'resultId', 'year', 'round', 'grid', 'positionOrder', 'points', 'laps', 'dob', 'date', 'target_finish',
     'driverRef', 'forename', 'surname', 'nationality_x',
