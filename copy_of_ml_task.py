@@ -44,12 +44,32 @@ model = RandomForestClassifier(n_estimators=700, max_depth=12, random_state=1)
 model.fit(X_train, y_train)
 
 st.title('Formula 1 Finish Prediction')
-grid = st.sidebar.number_input("Grid Position", min_value=1, max_value=20, value=1)
-position_order = st.sidebar.number_input("Position Order", min_value=1, max_value=20, value=1)
-driver_age = st.sidebar.number_input("Driver Age at Race", min_value=18, max_value=50, value=25)
-constructor = st.sidebar.selectbox("Constructor", options=df['constructorRef_encoded'].unique())
-driver = st.sidebar.selectbox("Driver", options=df['driverRef_encoded'].unique())
-input_data = np.array([[grid, position_order, driver_age, constructor, driver]])
+lookup_table = pd.read_csv("f1_dnf.csv")[['driverRef','constructorRef','lat','lng']].drop_duplicates()
+
+year = st.number_input("Year", min_value=1950, max_value=2030, value=2023)
+round_num = st.number_input("Round", min_value=1, max_value=30, value=1)
+grid = st.number_input("Grid", min_value=1, max_value=50, value=1)
+positionOrder = st.number_input("Position Order", min_value=1, max_value=50, value=1)
+driver_choice = st.selectbox("Driver", sorted(lookup_table['driverRef'].unique()))
+constructor_choice = st.selectbox("Constructor", sorted(lookup_table['constructorRef'].unique()))
+lat = st.number_input("Latitude", value=float(lookup_table['lat'].mean()))
+lng = st.number_input("Longitude", value=float(lookup_table['lng'].mean()))
+driver_age = st.number_input("Driver Age at Race (years)", min_value=16.0, max_value=60.0, value=28.0)
+
+driver_encoded = le_driver.transform([driver_choice])[0]
+constructor_encoded = le_constructor.transform([constructor_choice])[0]
+
+input_df = pd.DataFrame([{
+    "year": year,
+    "round": round_num,
+    "grid": grid,
+    "positionOrder": positionOrder,
+    "lat": lat,
+    "lng": lng,
+    "driver_age_at_race": driver_age,
+    "constructorRef_encoded": constructor_encoded,
+    "driverRef_encoded": driver_encoded
+}])
 
 if st.sidebar.button("Predict"):
     prediction = model.predict(input_data)
